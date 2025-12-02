@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Student Registration</title>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        background: #f1f3f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        height: auto;
+    }
+
+    .card {
+        width: 420px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+        color: #1e3a8a;
+    }
+
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    .input-group label {
+        font-size: 14px;
+        color: #444;
+        margin-bottom: 6px;
+        display: block;
+        font-weight: 500;
+    }
+
+    .input-group input, .input-group select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .input-group input:focus, .input-group select:focus {
+        border-color: #1e3a8a;
+        box-shadow: 0 0 4px rgba(30, 58, 138, 0.3);
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #1e3a8a;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #172e6a;
+    }
+
+    .msg {
+        margin-top: 15px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .login-text {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+        color: #444;
+    }
+
+    .login-text a {
+        color: #1e3a8a;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="card">
+    <h2>Student Registration</h2>
+
+    <div class="input-group">
+        <label>Name</label>
+        <input id="name" type="text" placeholder="Enter your name">
+    </div>
+
+    <div class="input-group">
+        <label>Email</label>
+        <input id="email" type="email" placeholder="Enter email">
+    </div>
+
+    <div class="input-group">
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Enter password">
+    </div>
+
+    <div class="input-group">
+        <label>Register Number</label>
+        <input id="registerNumber" type="text" placeholder="Enter register number">
+    </div>
+
+    <div class="input-group">
+        <label>Register Password</label>
+        <input id="registerPassword" type="password" placeholder="Enter register password">
+    </div>
+
+    <div class="input-group">
+        <label>Department</label>
+        <select id="department">
+            <option value="">Select Dept</option>
+            <option>B.Tech</option>
+            <option>Bio-Tech</option>
+            <option>Degree</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label>Branch</label>
+        <select id="branch">
+            <option value="">Select Branch</option>
+             <option>CSE AI</option>
+              <option>DS AI</option>
+            <option>CSE</option>
+            <option>MECH</option>
+            <option>CIVIL</option>
+             <option>ECE</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label>Section</label>
+        <select id="section">
+            <option value="">Select section</option>
+            <option>BA</option>
+            <option>BB</option>
+            <option>BC</option>
+            <option>BD</option>
+            <option>BE</option>
+            <option>BF</option>
+            <option>BG</option>
+            
+        </select>
+    </div>
+
+    <button onclick="register()">Register</button>
+
+    <div class="msg" id="msg"></div>
+
+    <!-- 3️⃣ LOGIN LINK ADDED -->
+    <div class="login-text">
+        Already have an account? <a href="login.html">Login</a>
+    </div>
+
+</div>
+
+<script>
+async function register() {
+    const msg = document.getElementById("msg");
+    msg.innerText = "Submitting...";
+
+    const data = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        registerNumber: document.getElementById("registerNumber").value,
+        registerPassword: document.getElementById("registerPassword").value,
+        department: document.getElementById("department").value,
+        branch: document.getElementById("branch").value,
+        section: document.getElementById("section").value
+    };
+
+    try {
+        const res = await fetch("http://localhost:5000/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        // 2️⃣ USER ALREADY EXISTS
+        if (!res.ok) {
+            msg.style.color = "red";
+            msg.innerText = result.message || "Registration failed";
+            return;
+        }
+
+        // 1️⃣ STORE USER & REDIRECT TO DASHBOARD
+        localStorage.setItem("student", JSON.stringify(result.student));
+        msg.style.color = "green";
+        msg.innerText = "Registration Successful! Redirecting...";
+
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 800);
+
+    } catch (err) {
+        msg.innerText = "Error connecting to server";
+    }
+}
+</script>
+
+</body>
+</html>
