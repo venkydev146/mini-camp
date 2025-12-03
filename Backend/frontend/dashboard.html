@@ -313,7 +313,7 @@ function toggleMode() {
 }
 
 // Load Student Data (from login)
-const student = JSON.parse(localStorage.getItem("studentData"));
+const student = JSON.parse(localStorage.getItem("student"));
 
 if (student) {
     document.getElementById("studentName").innerText = student.name;
