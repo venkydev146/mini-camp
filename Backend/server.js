@@ -20,10 +20,10 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Serve static frontend
+// Serve static frontend files
 app.use(express.static(path.join(__dirname, "frontend")));
 
-// Catch-all (works in Express v5)
+// Express v5 SAFE catch-all route
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "register.html"));
 });
