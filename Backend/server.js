@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, "frontend")));
 
 // Catch-all (works in Express v5)
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "frontend", "index.html"));
+  res.sendFile(path.join(__dirname, "frontend", "register.html"));
 });
 
 const PORT = process.env.PORT || 5000;
