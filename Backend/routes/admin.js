@@ -1,32 +1,31 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
 const router = express.Router();
-const Admin = require("../models/Admin");
+const bcrypt = require("bcryptjs");
 
-// --------------------------------------
-//  ADMIN REGISTER  (Run only once manually)
-// --------------------------------------
+// get pool from config (works whether config exports { connectDB, pool } or pool directly)
+const dbModule = require("../config/db");
+const pool = dbModule.pool || dbModule;
+
+// POST /api/admin/register  (create admin - run once)
 router.post("/register", async (req, res) => {
-    try {
-        const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ message: "Missing fields" });
 
-        // Check if admin exists
-        const existing = await Admin.findOne({ username });
-        if (existing) {
-            return res.status(400).json({ message: "Admin already exists" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        await Admin.create({
-            username,
-            password: hashedPassword
-        });
-
-        return res.status(201).json({ message: "Admin created successfully" });
-    } catch (err) {
-        return res.status(500).json({ message: "Server error" });
+    // check existing
+    const existing = await pool.query("SELECT id FROM admins WHERE username = $1", [username]);
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ message: "Admin already exists" });
     }
+
+    const hashed = await bcrypt.hash(password, 10);
+    await pool.query("INSERT INTO admins (username, password) VALUES ($1, $2)", [username, hashed]);
+
+    return res.status(201).json({ message: "Admin created successfully" });
+  } catch (err) {
+    console.error("ADMIN REGISTER ERROR:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;
