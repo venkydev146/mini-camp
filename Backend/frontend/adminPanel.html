@@ -85,7 +85,7 @@ if (!localStorage.getItem("adminToken")) {
 async function loadStudents() {
     const token = localStorage.getItem("adminToken");
 
-   const res = await fetch("https://mini-camp-3.onrender.com/api/auth/admin/students", {
+   const res = await fetch("https://mini-camp-7.onrender.com/api/auth/admin/students", {
         headers: {
             // FIX: add Bearer token
             "Authorization": "Bearer " + token
