@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+
+    body { 
+        font-family: 'Poppins', sans-serif; 
+        background: #eef2f7; 
+        display: flex; 
+        justify-content:center; 
+        align-items: center; 
+        height: 100vh;
+        padding: 20px;
+    }
+
+    .card {
+        width: 360px;
+        background:white;
+        padding: 28px;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .card h2 { 
+        text-align: center; 
+        margin-bottom: 25px; 
+        color:#1e3a8a; 
+        font-weight: 600;
+    }
+
+    input {
+        width: 100%; 
+        padding: 12px; 
+        margin-bottom: 14px;
+        border: 1px solid #ccc; 
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    button {
+        width: 100%; 
+        padding: 12px;
+        background:#1e3a8a; 
+        color:white; 
+        border:none;
+        border-radius:8px; 
+        cursor:pointer;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    button:hover {
+        background:#162e6a;
+    }
+
+    #msg {
+        text-align:center;
+        margin-top:12px;
+        color:red;
+        font-size: 14px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Admin Login</h2>
+
+    <input id="username" type="text" placeholder="Admin Username">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <p id="msg"></p>
+</div>
+
+<script>
+async function login() {
+    const msg = document.getElementById("msg");
+    msg.innerText = "Checking...";
+
+    const data = {
+        username: document.getElementById("username").value.trim(),
+        password: document.getElementById("password").value.trim()
+    };
+
+   const res = await fetch("https://mini-camp-3.onrender.com/api/auth/admin/login", {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+        msg.innerText = result.message;
+        return;
+    }
+
+    // ⭐ THIS WAS MISSING ⭐
+    localStorage.setItem("adminToken", result.token);
+
+    msg.style.color = "green";
+    msg.innerText = "Login successful!";
+
+    setTimeout(() => {
+        window.location.href = "adminPanel.html";
+    }, 800);
+}
+</script>
+
+</body>
+</html>

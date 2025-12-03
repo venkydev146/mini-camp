@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+
+    body { 
+        font-family: Poppins, sans-serif; 
+        background:#f4f6fb; 
+        padding:20px;
+    }
+
+    h2 { 
+        color:#1e3a8a; 
+        text-align:center; 
+        margin-bottom: 20px;
+    }
+
+    table { 
+        width:100%; 
+        border-collapse: collapse; 
+        background:white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    th, td { 
+        padding: 12px; 
+        border:1px solid #e5e7eb; 
+        font-size: 14px;
+    }
+
+    th { 
+        background:#1e3a8a; 
+        color:white; 
+        font-weight: 500;
+    }
+
+    #logout {
+        display: block;
+        margin: 20px auto;
+        width: 160px;
+        background:#dc2626;
+        padding: 10px;
+        color:white;
+        border-radius: 8px;
+        text-align:center;
+        cursor:pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>Admin Panel – All Registered Students</h2>
+
+<button id="logout" onclick="logout()">Logout</button>
+
+<table id="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Reg No</th>
+            <th>Dept</th>
+            <th>Branch</th>
+            <th>Section</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+
+// 🚨 Protect panel
+if (!localStorage.getItem("adminToken")) {
+    alert("Unauthorized. Please login as admin.");
+    window.location.href = "adminlogin.html";
+}
+
+async function loadStudents() {
+    const token = localStorage.getItem("adminToken");
+
+   const res = await fetch("https://mini-camp-3.onrender.com/api/auth/admin/students", {
+        headers: {
+            // FIX: add Bearer token
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    const students = await res.json();
+    const tbody = document.querySelector("#table tbody");
+    tbody.innerHTML = "";
+
+    students.forEach(s => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${s.name}</td>
+                <td>${s.email}</td>
+                <td>${s.registerNumber}</td>
+                <td>${s.department}</td>
+                <td>${s.branch}</td>
+                <td>${s.section}</td>
+            </tr>
+        `;
+    });
+}
+
+loadStudents();
+
+// Logout
+function logout() {
+    localStorage.removeItem("adminToken");
+    window.location.href = "adminlogin.html";
+}
+</script>
+
+</body>
+</html>
